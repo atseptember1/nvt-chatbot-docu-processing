@@ -38,7 +38,7 @@ def main(myblob: InputStream):
     
     filename = myblob.name.split("/")[1]
     fileurl = myblob.uri
-    fileurl_for_formrecognizer = fileurl + "?" + os.environ.get("BLOB_CONTAINER_SAS")
+    fileurl_for_formrecognizer = fileurl + "?" + os.environ.get("BLOB_CONTAINER_SAS") if os.environ.get("BLOB_CONTAINER_SAS")[0] != "?" else fileurl + os.environ.get("BLOB_CONTAINER_SAS")
 
     logging.warning("Document Processing Begin")
     logging.warning(f"Processing: {fileurl}")
@@ -103,6 +103,8 @@ def main(myblob: InputStream):
         logging.warning("Document Processing Ends - Successfully")
     
     except Exception as e:
+        logging.error(e)
+
         cosmoshelper.update_item(
             status_info=document_processing_status,
             status="Failed",
